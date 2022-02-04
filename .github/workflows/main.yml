@@ -14,4 +14,4 @@ jobs:
 
     steps:
       - name: Deploy to SPM
-      run: swift package generate-xcodeproj
+        run: swift package generate-xcodeproj
