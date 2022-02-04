@@ -41,6 +41,8 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
     internal lazy var accessibilityOrderedElements: [[NSUIAccessibilityElement]] = accessibilityCreateEmptyOrderedElements()
 
     private typealias Buffer = [CGRect]
+
+    internal let barCornerRadius = CGFloat(5.0)
     
     @objc open weak var dataProvider: BarChartDataProvider?
     
@@ -323,7 +325,7 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                 guard let e = dataSet.entryForIndex(i) as? BarChartDataEntry else { continue }
                 
                 x = e.x
-                
+
                 _barShadowRectBuffer.origin.x = CGFloat(x - barWidthHalf)
                 _barShadowRectBuffer.size.width = CGFloat(barWidth)
                 
@@ -337,6 +339,7 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                 _barShadowRectBuffer.size.height = viewPortHandler.contentHeight
                 
                 context.setFillColor(dataSet.barShadowColor.cgColor)
+                
                 context.fill(_barShadowRectBuffer)
             }
         }
@@ -351,7 +354,10 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                 guard viewPortHandler.isInBoundsRight(barRect.origin.x) else { break }
 
                 context.setFillColor(dataSet.barShadowColor.cgColor)
-                context.fill(barRect)
+                
+                let bezierPath = UIBezierPath(roundedRect: barRect, cornerRadius: barCornerRadius)
+                context.addPath(bezierPath.cgPath)
+                context.drawPath(using: .fill)
             }
         }
         
@@ -361,7 +367,6 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
         {
             context.setFillColor(dataSet.color(atIndex: 0).cgColor)
         }
-        
         // In case the chart is stacked, we need to accomodate individual bars within accessibilityOrdereredElements
         let isStacked = dataSet.isStacked
         let stackSize = isStacked ? dataSet.stackSize : 1
@@ -379,7 +384,9 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                 context.setFillColor(dataSet.color(atIndex: j).cgColor)
             }
             
-            context.fill(barRect)
+            let bezierPath = UIBezierPath(roundedRect: barRect, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: 10, height: 10))
+            context.addPath(bezierPath.cgPath)
+            context.drawPath(using: .fill)
             
             if drawBorder
             {

@@ -930,7 +930,7 @@ open class PieChartRenderer: NSObject, DataRenderer
 
         return element
     }
-    
+
     public func createAccessibleHeader(usingChart chart: ChartViewBase, andData data: ChartData, withDefaultDescription defaultDescription: String) -> NSUIAccessibilityElement {
         return AccessibleHeader.create(usingChart: chart, andData: data, withDefaultDescription: defaultDescription)
     }
